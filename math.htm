@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clever | Log in</title>
+    <link id="dynamic-favicon" rel="icon" href="https://favicons.teamtailor-cdn.com/icon?url=https%3a%2f%2fclever.com&size=80..120..200">
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+        #embed-container { width: 100vw; height: 100vh; display: none; }
+        #passcode-container { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            display: flex; align-items: center; justify-content: center; 
+            background: white; flex-direction: column;
+        }
+        .popup {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="passcode-container">
+        <h2>Enter Passcode</h2>
+        <input type="password" id="passcode-input" placeholder="Enter passcode">
+        <button onclick="checkPasscode()">Submit</button>
+    </div>
+    <iframe id="embed-container" src="https://www.securlymath.com" frameborder="0"></iframe>
+    
+    <div id="popup" class="popup">
+        <h3>Cloaker thingy</h3>
+        <label>Change Favicon:</label>
+        <select id="favicon-options" onchange="updateTitleAndFavicon()">
+            <option value="https://favicons.teamtailor-cdn.com/icon?url=classroom.google.com&size=80..120..200" data-title="Home">Home</option>
+            <option value="https://login.i-ready.com/favicon.ico" data-title="Math - I-ready">Math - I-ready</option>
+            <option value="https://accounts.google.com/favicon.ico" data-title="classroom login - Google Search">Google Serach</option>
+            <option value="custom" data-title="">Custom</option>
+        </select>
+        <input type="text" id="custom-title" placeholder="Custom Title" style="display:none;">
+        <input type="text" id="custom-favicon" placeholder="Custom Favicon URL" style="display:none;">
+        <button onclick="applyChanges()">Apply</button>
+    </div>
+    
+    <script>
+        function checkPasscode() {
+            const input = document.getElementById("passcode-input").value;
+            if (input === "askmasontai") {
+                localStorage.setItem("authenticated", "true");
+                document.getElementById("passcode-container").style.display = "none";
+                document.getElementById("embed-container").style.display = "block";
+            } else {
+                alert("Incorrect passcode!");
+            }
+        }
+        
+        if (localStorage.getItem("authenticated")) {
+            document.getElementById("passcode-container").style.display = "none";
+            document.getElementById("embed-container").style.display = "block";
+        }
+        
+        document.addEventListener("keydown", function(event) {
+            if (event.ctrlKey && event.key === "f") {
+                event.preventDefault();
+                document.getElementById("popup").style.display = "block";
+            }
+        });
+        
+        document.getElementById("popup").addEventListener("mouseleave", function() {
+            document.getElementById("popup").style.display = "none";
+        });
+        
+        function updateTitleAndFavicon() {
+            const selectedOption = document.getElementById("favicon-options").selectedOptions[0];
+            const newFavicon = selectedOption.value;
+            const newTitle = selectedOption.getAttribute("data-title");
+            
+            if (newFavicon === "custom") {
+                document.getElementById("custom-title").style.display = "block";
+                document.getElementById("custom-favicon").style.display = "block";
+            } else {
+                document.getElementById("custom-title").style.display = "none";
+                document.getElementById("custom-favicon").style.display = "none";
+                document.title = newTitle;
+                document.getElementById("dynamic-favicon").href = newFavicon;
+            }
+        }
+        
+        function applyChanges() {
+            const newTitle = document.getElementById("custom-title").value || document.title;
+            const newFavicon = document.getElementById("custom-favicon").value || document.getElementById("dynamic-favicon").href;
+            
+            document.title = newTitle;
+            document.getElementById("dynamic-favicon").href = newFavicon;
+            document.getElementById("popup").style.display = "none";
+        }
+    </script>
+</body>
+</html>
